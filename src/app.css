@@ -1,4 +1,34 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-@plugin "daisyui";
+@plugin "daisyui" {
+	themes: light --default;
+}
+
+.wrapper {
+	@apply flex h-screen w-full flex-col items-center justify-center px-4 py-2;
+}
+
+.title {
+	@apply from-primary mx-auto w-fit bg-gradient-to-r from-5% to-pink-500 to-40% bg-clip-text text-6xl font-bold text-transparent;
+}
+
+.calendar__button {
+	@apply btn border-base-content/5 btn-xs border p-1 shadow-xs;
+}
+
+.calendar__card {
+	@apply rounded-box border-base-content/5 bg-base-200 w-fit border p-4 shadow-sm;
+}
+
+.calendar__day {
+	@apply rounded-box text-base-content hover:border-base-content data-selected:bg-primary data-selected:text-primary-content data-disabled:text-base-content/30 data-unavailable:text-base-content/30 relative inline-flex size-10 items-center justify-center border border-transparent bg-transparent p-0 text-sm font-normal whitespace-nowrap data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-bold data-unavailable:line-through;
+}
+
+.calendar__cell {
+	@apply relative size-10 p-0! text-center text-sm;
+}
+
+.calendar__today {
+	@apply bg-primary group-data-selected:bg-primary-content absolute top-[5px] hidden size-1 rounded-full group-data-today:block;
+}

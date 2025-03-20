@@ -1,13 +1,31 @@
 <script lang="ts">
 	import { Calendar } from 'bits-ui';
-	import { DateFormatter, getLocalTimeZone, today } from '@internationalized/date';
+	import { DateFormatter, getLocalTimeZone, today, type DateValue } from '@internationalized/date';
 	import CaretLeft from 'phosphor-svelte/lib/CaretLeft';
 	import CaretRight from 'phosphor-svelte/lib/CaretRight';
 
 	const currentDate = today(getLocalTimeZone());
-	let value = $state(today(getLocalTimeZone()));
+	const currentYear = new Date().getFullYear();
+	const yearList = Array.from({ length: 30 }, (_, i) => currentYear - i);
 
-	const formatter = new DateFormatter('en-US', {
+	type Props = {
+		locale?: string;
+		value?: DateValue;
+		placeholder?: DateValue;
+		selectableYears?: number[];
+		selectable?: boolean;
+		onValueChange?: (value: DateValue | undefined) => void;
+	};
+	let {
+		locale = $bindable('en-GB'),
+		value = $bindable(),
+		placeholder = $bindable(currentDate),
+		selectableYears = yearList,
+		selectable = false,
+		onValueChange
+	}: Props = $props();
+
+	const formatter = new DateFormatter(locale, {
 		month: 'long'
 	});
 
@@ -18,10 +36,6 @@
 			label: formatter.format(month.toDate(getLocalTimeZone()))
 		};
 	});
-
-	const currentYear = new Date().getFullYear();
-	const yearList = Array.from({ length: 30 }, (_, i) => currentYear - i);
-	let placeholder = $state(currentDate);
 </script>
 
 <Calendar.Root
@@ -31,41 +45,46 @@
 	bind:placeholder
 	type="single"
 	bind:value
+	{onValueChange}
 >
 	{#snippet children({ months, weekdays })}
 		<Calendar.Header class="flex items-center justify-between gap-3">
 			<Calendar.PrevButton class="calendar__button">
 				<CaretLeft class="size-4" />
 			</Calendar.PrevButton>
-			<select
-				aria-label="Select month"
-				value={placeholder.month}
-				class="select select-sm text-sm"
-				onchange={(e) => {
-					const month = parseInt(e.currentTarget.value);
-					placeholder = placeholder.set({ month });
-				}}
-			>
-				{#each monthList as month}
-					<option value={month.value}>{month.label}</option>
-				{/each}
-			</select>
+			{#if selectable}
+				<select
+					aria-label="Select month"
+					value={placeholder?.month}
+					class="select select-sm text-sm"
+					onchange={(e) => {
+						const month = parseInt(e.currentTarget.value);
+						placeholder = placeholder?.set({ month });
+					}}
+				>
+					{#each monthList as month}
+						<option value={month.value}>{month.label}</option>
+					{/each}
+				</select>
+				<select
+					class="select select-sm text-sm"
+					aria-label="Select year"
+					value={placeholder?.year}
+					onchange={(e) => {
+						const year = parseInt(e.currentTarget.value);
+						placeholder = placeholder?.set({ year });
+					}}
+				>
+					{#each selectableYears as year}
+						<option value={year}>{year}</option>
+					{/each}
+				</select>
+			{:else}
+				<Calendar.Heading class="font-medium" />
+			{/if}
 			<Calendar.NextButton class="calendar__button">
 				<CaretRight class="size-4" />
 			</Calendar.NextButton>
-			<select
-				class="select select-sm text-sm"
-				aria-label="Select year"
-				value={placeholder.year}
-				onchange={(e) => {
-					const year = parseInt(e.currentTarget.value);
-					placeholder = placeholder.set({ year });
-				}}
-			>
-				{#each yearList as year}
-					<option value={year}>{year}</option>
-				{/each}
-			</select>
 		</Calendar.Header>
 		<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-y-0 sm:space-x-4">
 			{#each months as month, i (i)}

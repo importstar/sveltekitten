@@ -1,9 +1,7 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-@plugin "daisyui" {
-	themes: light --default;
-}
+@plugin "daisyui";
 
 .wrapper {
 	@apply flex h-screen w-full flex-col items-center justify-center px-4 py-2;
@@ -22,7 +20,7 @@
 }
 
 .calendar__day {
-	@apply rounded-box text-base-content hover:border-base-content data-selected:bg-primary data-selected:text-primary-content data-disabled:text-base-content/30 data-unavailable:text-base-content/30 relative inline-flex size-10 items-center justify-center border border-transparent bg-transparent p-0 text-sm font-normal whitespace-nowrap data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-bold data-unavailable:line-through;
+	@apply [&[data-today]:not([data-selected])]:bg-base-content/10 rounded-box text-base-content hover:border-base-content data-selected:bg-primary data-selected:text-primary-content data-disabled:text-base-content/30 data-unavailable:text-base-content/30 relative inline-flex size-10 items-center justify-center border border-transparent bg-transparent p-0 text-sm font-normal whitespace-nowrap data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-bold data-unavailable:line-through;
 }
 
 .calendar__cell {

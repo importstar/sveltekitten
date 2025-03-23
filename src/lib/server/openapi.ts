@@ -11,6 +11,6 @@ export async function handleFetch<T>(callback: () => Promise<T>) {
 	try {
 		return await callback();
 	} catch (err: unknown) {
-		error(503, 'Cannot connect to server');
+		error(503, { message: 'Service Unavailable', code: 503 });
 	}
 }

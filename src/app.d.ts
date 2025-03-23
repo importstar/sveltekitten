@@ -5,7 +5,10 @@ import type pino from 'pino';
 // for information about these interfaces
 declare global {
 	namespace App {
-		// interface Error {}
+		interface Error {
+			code: number;
+			message: string;
+		}
 		interface Locals {
 			logger: pino.Logger;
 		}

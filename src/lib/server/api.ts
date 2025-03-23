@@ -38,6 +38,6 @@ export async function apiFetch<T>(
 		const data = await res.json(); // Assuming API always returns JSON when successful
 		return { data, response: res, status: res.status, headers: res.headers };
 	} catch (err: unknown) {
-		error(503, 'Cannot connect to server');
+		error(503, { message: 'Service Unavailable', code: 503 });
 	}
 }

@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-@plugin "daisyui";
+@plugin "daisyui" {
+	themes: light --default;
+}
 
 .wrapper {
 	@apply flex h-screen w-full flex-col items-center justify-center px-4 py-2;

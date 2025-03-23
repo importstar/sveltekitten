@@ -1,11 +1,16 @@
 import type { PageServerLoad } from './$types';
-import { client } from '$lib/client/client.gen';
-import { safeFetch } from '$lib/api';
-import { pokemonList } from '$lib/client';
+import { client, handleFetch } from '$lib/server/openapi';
+import { env } from '$env/dynamic/public';
+import { pokemonList, type PaginatedPokemonSummaryList, type PokemonSummary } from '$lib/client';
+import { error } from '@sveltejs/kit';
+import { apiFetch } from '$lib/server/api';
 
-export const load = (async () => {
-	const response = await safeFetch(() => pokemonList({ client: client }));
+export const load = (async ({ locals }) => {
+	// const response = await safeFetch(() => pokemonList({ client: client }));
+	let pokemons: PokemonSummary[] = [];
+	const res = await handleFetch(() => pokemonList({ client: client }));
+	pokemons = res.data?.results ?? [];
 	return {
-		pokemons: response.data?.results ?? []
+		pokemons: pokemons
 	};
 }) satisfies PageServerLoad;

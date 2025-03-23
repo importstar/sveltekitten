@@ -6,10 +6,10 @@
 	{#if page.error}
 		<div class="card mx-auto my-auto w-96">
 			<div class="card-body text-center">
-				<p class="text-5xl font-bold">
+				<p class="mb-1 text-5xl font-bold">
 					{page.error.code}
 				</p>
-				<p class="text-sm">
+				<p class="text-2xl">
 					{page.error.message}
 				</p>
 			</div>

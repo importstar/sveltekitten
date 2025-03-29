@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import DatePicker from '$lib/components/forms/DatePicker.svelte';
+	import DatePicker from '$lib/components/ui/forms/DatePicker.svelte';
 	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import { parseDate, type DateValue } from '@internationalized/date';
 	import { today, getLocalTimeZone } from '@internationalized/date';

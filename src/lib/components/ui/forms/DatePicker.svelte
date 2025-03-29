@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Popover } from 'bits-ui';
-	import Calendar from '../ui/Calendar.svelte';
+	import Calendar from '../Calendar.svelte';
 	import { DateFormatter, getLocalTimeZone, type DateValue } from '@internationalized/date';
 	import CalendarBlank from 'phosphor-svelte/lib/CalendarBlank';
 

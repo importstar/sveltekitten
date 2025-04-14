@@ -7,16 +7,16 @@
 	import FormField from './FormField.svelte';
 	import type { BaseInputProps } from '$lib/models/baseInputProps';
 
-	type InputProps = { value: string } & BaseInputProps & FieldProps<T, U>;
+	type InputProps = Omit<HTMLTextAreaElement, 'form'> & BaseInputProps & FieldProps<T, U>;
 
-	let { form, label, name, placeholder, description, value = $bindable() }: InputProps = $props();
+	let { form, label, name, description, value = $bindable() }: InputProps = $props();
 </script>
 
 <FormField {form} {label} {name} {description}>
 	{#snippet formInput({ props })}
 		<div class="flex w-full flex-col gap-1">
 			<Label>{label}</Label>
-			<textarea class="textarea w-full" {placeholder} {...props} bind:value></textarea>
+			<textarea class="textarea w-full" {...props} bind:value></textarea>
 		</div>
 	{/snippet}
 </FormField>

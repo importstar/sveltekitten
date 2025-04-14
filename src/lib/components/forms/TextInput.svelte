@@ -7,16 +7,18 @@
 	import FormField from './FormField.svelte';
 	import type { BaseInputProps } from '$lib/models/baseInputProps';
 
-	type InputProps = { value: string } & BaseInputProps & FieldProps<T, U>;
+	import type { HTMLInputAttributes } from 'svelte/elements';
 
-	let { form, label, name, placeholder, description, value = $bindable('') }: InputProps = $props();
+	type InputProps = Omit<HTMLInputAttributes, 'form'> & BaseInputProps & FieldProps<T, U>;
+
+	let { form, label, name, description, value = $bindable(''), ...attrs }: InputProps = $props();
 </script>
 
 <FormField {form} {label} {name} {description}>
 	{#snippet formInput({ props })}
 		<div class="flex w-full flex-col gap-1">
 			<Label>{label}</Label>
-			<input type="text" class="input w-full" {placeholder} {...props} bind:value />
+			<input type="text" class="input w-full" {...attrs} {...props} bind:value />
 		</div>
 	{/snippet}
 </FormField>

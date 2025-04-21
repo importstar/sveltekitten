@@ -5,6 +5,10 @@
 	themes: light --default;
 }
 
+input[data-fs-error] {
+	@apply input-error;
+}
+
 .wrapper {
 	@apply flex h-screen w-full flex-col items-center justify-center px-4 py-2;
 }

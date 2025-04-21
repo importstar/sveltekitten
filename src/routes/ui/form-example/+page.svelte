@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageData } from './$types';
-	import { valibotClient } from 'sveltekit-superforms/adapters';
-	import { exampleSchema } from './example.schema';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { schema } from './example.schema';
 	import TextInput from '$lib/components/forms/TextInput.svelte';
 	import SuperDebug from 'sveltekit-superforms';
 
 	let { data }: { data: PageData } = $props();
 
 	const form = superForm(data.form, {
-		validators: valibotClient(exampleSchema),
+		validators: zodClient(schema),
 		onResult: ({ result }) => {
 			if (result.type === 'success') {
 				console.log('Form submitted successfully:', result.data);

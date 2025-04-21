@@ -50,9 +50,7 @@
 	{/if}
 	<FieldErrors>
 		{#snippet children({ errors, errorProps })}
-			{#each errors as err}
-				<span class="text-error" {...errorProps}>{err}</span>
-			{/each}
+			<span class="text-error" {...errorProps}>{errors.toString().replace(',', ', ')}</span>
 		{/snippet}
 	</FieldErrors>
 </Field>

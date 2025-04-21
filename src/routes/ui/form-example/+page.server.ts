@@ -1,11 +1,11 @@
 import { superValidate } from 'sveltekit-superforms';
 import type { PageServerLoad } from './$types';
-import { exampleSchema } from './example.schema';
-import { valibot } from 'sveltekit-superforms/adapters';
+import { schema } from './example.schema';
 import type { Actions } from '@sveltejs/kit';
+import { zod } from 'sveltekit-superforms/adapters';
 
 export const load = (async () => {
-	const form = await superValidate(valibot(exampleSchema));
+	const form = await superValidate(zod(schema));
 	return {
 		form
 	};
@@ -14,7 +14,7 @@ export const load = (async () => {
 export const actions = {
 	default: async (context) => {
 		const { request } = context;
-		const form = await superValidate(request, valibot(exampleSchema));
+		const form = await superValidate(request, zod(schema));
 		if (!form.valid) {
 			return { form, errors: form.errors };
 		}

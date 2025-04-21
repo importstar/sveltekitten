@@ -1,11 +1,10 @@
-import * as v from 'valibot';
+import { z } from 'zod';
 
-export const exampleSchema = v.object({
-	name: v.pipe(v.string(), v.minLength(1, 'Name is required')),
-	email: v.pipe(v.string(), v.email('Invalid email')),
-	phone: v.pipe(
-		v.string(),
-		v.minLength(1, 'Phone is required'),
-		v.regex(/^\d+$/, 'Phone must contain only numbers')
-	)
+export const schema = z.object({
+	name: z.string().min(1, 'Name is required'),
+	email: z.string().email('Invalid email'),
+	phone: z
+		.string()
+		.min(10, 'Phone contain 10 numbers')
+		.regex(/^\d+$/, 'Phone must contain only numbers')
 });

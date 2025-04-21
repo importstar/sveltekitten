@@ -1,9 +1,14 @@
-import type { PageServerLoad } from './$types';
-import { superValidate } from 'sveltekit-superforms';
-import { valibot } from 'sveltekit-superforms/adapters';
+import { superValidate } from 'sveltekit-superforms/server';
 import { schema } from '$lib/schemas/dob.schema';
+import { zod } from 'sveltekit-superforms/adapters';
 
-export const load = (async () => {
-	const form = await superValidate(valibot(schema));
+export const load = async () => {
+	const form = await superValidate(zod(schema));
 	return { form };
-}) satisfies PageServerLoad;
+};
+
+export const actions = {
+	default: async ({ request }) => {
+		const form = await superValidate(request, zod(schema));
+	}
+};

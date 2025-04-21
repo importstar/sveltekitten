@@ -8,7 +8,10 @@
 			<h3 class="card-title capitalize">
 				{name}
 			</h3>
-			<a {href} class="btn btn-primary" target="_blank"> See API </a>
+			<div class="flex items-center gap-2">
+				<a {href} class="btn btn-primary btn-soft" target="_blank"> See API </a>
+				<a href="/pokemons/{name}" class="btn btn-primary"> Detail </a>
+			</div>
 		</div>
 	</div>
 </div>

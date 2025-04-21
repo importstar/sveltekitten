@@ -1,7 +1,13 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
-@plugin "daisyui";
+@plugin "daisyui" {
+	themes: light --default;
+}
+
+input[data-fs-error] {
+	@apply input-error;
+}
 
 .calendar__button {
 	@apply btn border-base-content/5 btn-xs border p-1 shadow-xs;

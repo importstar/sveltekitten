@@ -1,5 +1,5 @@
-import * as v from 'valibot';
+import { z } from 'zod';
 
-export const schema = v.object({
-	dob: v.pipe(v.string())
+export const schema = z.object({
+	dob: z.string()
 });

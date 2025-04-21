@@ -1,11 +1,12 @@
 import type { PageServerLoad } from './$types';
-import { client } from '$lib/client/client.gen';
-import { safeFetch } from '$lib/api';
-import { pokemonList } from '$lib/client';
+import { client, handleFetch } from '$lib/server/openapi';
+import { pokemonList, type PokemonSummary } from '$lib/client';
 
 export const load = (async () => {
-	const response = await safeFetch(() => pokemonList({ client: client }));
+	let pokemons: PokemonSummary[] = [];
+	const res = await handleFetch(() => pokemonList({ client: client }));
+	pokemons = res.data?.results ?? [];
 	return {
-		pokemons: response.data?.results ?? []
+		pokemons: pokemons
 	};
 }) satisfies PageServerLoad;

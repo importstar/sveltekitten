@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from '$lib/utils';
+	import { cn } from '$lib/utils/tw-utils';
 	import { Popover } from 'bits-ui';
 	import type { Snippet } from 'svelte';
 	import type { ComponentProps } from 'svelte';

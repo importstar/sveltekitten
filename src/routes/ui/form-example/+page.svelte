@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { schema } from './example.schema';
-	import TextInput from '$lib/components/forms/TextInput.svelte';
+	import TextInput from '$lib/components/ui/forms/TextInput.svelte';
 	import SuperDebug from 'sveltekit-superforms';
 
 	let { data }: { data: PageData } = $props();

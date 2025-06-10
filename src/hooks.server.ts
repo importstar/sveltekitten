@@ -1,4 +1,5 @@
+import apiClientHandle from '$lib/hooks/api-client.hook';
+import { authHandler } from '$lib/hooks/auth.hook';
 import { sequence } from '@sveltejs/kit/hooks';
-import logHandler from '$lib/hooks/logger.hook';
 
-export const handle = sequence(logHandler);
+export const handle = sequence(apiClientHandle, authHandler);

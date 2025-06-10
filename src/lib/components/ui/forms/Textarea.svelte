@@ -5,7 +5,7 @@
 <script lang="ts" generics="T extends Record<string, unknown>, U extends FormPath<T>">
 	import { Label, type FieldProps } from 'formsnap';
 	import FormField from './FormField.svelte';
-	import type { BaseInputProps } from '$lib/models/baseInputProps';
+	import type { BaseInputProps } from '$lib/types/baseInputProps';
 
 	type InputProps = Omit<HTMLTextAreaElement, 'form'> & BaseInputProps & FieldProps<T, U>;
 

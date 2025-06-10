@@ -1,7 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-  input: 'https://raw.githubusercontent.com/PokeAPI/pokeapi/refs/heads/master/openapi.yml',
+  input: 'http://localhost:9000/openapi.json',
   output: {
     format: 'prettier',
     lint: 'eslint',

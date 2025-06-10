@@ -19,15 +19,15 @@
 		<Dialog.Content
 			class="fixed top-[50%] left-[50%] z-50 mx-auto flex h-screen w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] items-center justify-center"
 		>
-			{@render children?.()}
-			<Dialog.Close
-				class="absolute top-5 right-5 btn btn-circle btn-sm"
-			>
-				<div>
-					<X class="size-4" />
-					<span class="sr-only">Close</span>
-				</div>
-			</Dialog.Close>
+			<div class="relative">
+				{@render children?.()}
+				<Dialog.Close class="btn btn-ghost btn-circle btn-xs absolute top-5 right-5">
+					<div>
+						<X class="size-4" />
+						<span class="sr-only">Close</span>
+					</div>
+				</Dialog.Close>
+			</div>
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>

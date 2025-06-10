@@ -7,5 +7,5 @@
 	>
 		SvelteKitten
 	</h1>
-	<a href="/pokemons" class="btn btn-primary mt-5"> Pokemon Example </a>
+	<a href="/ui" class="btn btn-primary mt-5"> UI Example </a>
 </div>

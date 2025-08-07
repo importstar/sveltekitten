@@ -1,8 +1,7 @@
 // API Client Factory
-
 import { dev } from '$app/environment';
 import type { Cookies } from '@sveltejs/kit';
-import { getAuthToken } from './auth';
+import { ApiError, getAuthToken } from './api-core';
 
 type ApiClientConfig = {
 	fetchInstance: typeof fetch;
@@ -15,18 +14,6 @@ export interface ApiClient {
 	post: <T>(endpoint: string, body: unknown, options?: RequestInit) => Promise<T>;
 	put: <T>(endpoint: string, body: unknown, options?: RequestInit) => Promise<T>;
 	delete: <T>(endpoint: string, options?: RequestInit) => Promise<T>;
-}
-
-export class ApiError extends Error {
-	status: number;
-	data: unknown;
-
-	constructor(message: string, status: number, data: unknown) {
-		super(message);
-		this.name = 'ApiError';
-		this.status = status;
-		this.data = data;
-	}
 }
 
 export function createApiClient({ fetchInstance, baseUrl }: ApiClientConfig): ApiClient {

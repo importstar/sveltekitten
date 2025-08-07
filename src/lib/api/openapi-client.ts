@@ -46,5 +46,3 @@ export function createApiClient(event?: ServerEvent) {
 
 	client.use(createAuthMiddleware(browser ? undefined : event?.cookies));
 }
-
-export const apiClient = createApiClient();

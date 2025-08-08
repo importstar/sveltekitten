@@ -13,7 +13,7 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"openapi": "openapi-typescript",
-		"openapi:api": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/api/paths/api.d.ts"
+		"openapi:fastapi": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/api/paths/fastapi.d.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

@@ -2,7 +2,7 @@ import { env } from '$env/dynamic/public';
 import type { Cookies } from '@sveltejs/kit';
 import createClient, { type Middleware } from 'openapi-fetch';
 import { browser } from '$app/environment';
-import type { paths } from './paths/api';
+import type { paths } from './paths/fastapi';
 import { getAuthToken } from './api-core';
 
 // Define a clear type for the SvelteKit event object for server-side usage.

@@ -1,14 +1,19 @@
 <script lang="ts">
-	import { setLocale } from '$lib/paraglide/runtime';
-	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
+	import { setLocale, getLocale } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages.js';
+	import { Button } from '$lib/components/ui/button';
+
+	let currentLang = $derived.by(() => getLocale());
 </script>
 
 <h1>{m.hello_world({ name: 'SvelteKit User' })}</h1>
 <div>
-	<button onclick={() => setLocale('en')}>en</button>
-	<button onclick={() => setLocale('th')}>th</button>
+	<Button variant={currentLang === 'en' ? 'default' : 'outline'} onclick={() => setLocale('en')}>
+		EN
+	</Button>
+	<Button variant={currentLang === 'th' ? 'default' : 'outline'} onclick={() => setLocale('th')}>
+		TH
+	</Button>
 </div>
 <p>
 	If you use VSCode, install the <a

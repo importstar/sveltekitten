@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SuperDebug, { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
+	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
 	import * as Card from '../ui/card';
 	import * as Form from '../ui/form';
 	import { loginSchema } from '$lib/schemas/auth.schema';
@@ -7,7 +7,7 @@
 	import { Input } from '../ui/input';
 	import { Button } from '../ui/button';
 	import { LoaderCircle } from 'lucide-svelte';
-	import { dev } from '$app/environment';
+	import FormDebug from '../form/form-debug.svelte';
 
 	type LoginFormProps = {
 		form: SuperValidated<Infer<typeof loginSchema>>;
@@ -64,11 +64,6 @@
 				Login
 			</Button>
 		</form>
-
-		{#if dev}
-			<div class="my-4">
-				<SuperDebug data={$formData} />
-			</div>
-		{/if}
+		<FormDebug {formData} />
 	</Card.Content>
 </Card.Root>

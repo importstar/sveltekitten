@@ -17,6 +17,7 @@ declare global {
 			type Message = {
 				type: 'error' | 'success';
 				text: string;
+				description?: string;
 			};
 		}
 	}

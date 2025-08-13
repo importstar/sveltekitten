@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LoginForm from '$lib/components/login/login-form.svelte';
+	import LoginForm from './login-form.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();

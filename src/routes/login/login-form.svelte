@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { superForm, type Infer, type SuperValidated } from 'sveltekit-superforms';
-	import * as Card from '../ui/card';
-	import * as Form from '../ui/form';
+	import * as Card from '../../lib/components/ui/card';
+	import * as Form from '../../lib/components/ui/form';
 	import { loginSchema } from '$lib/schemas/auth.schema';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
-	import { Input } from '../ui/input';
-	import { Button } from '../ui/button';
+	import { Input } from '../../lib/components/ui/input';
+	import { Button } from '../../lib/components/ui/button';
 	import { LoaderCircle } from 'lucide-svelte';
-	import FormDebug from '../form/form-debug.svelte';
+	import FormDebug from '../../lib/components/form/form-debug.svelte';
+	import { goto } from '$app/navigation';
+	import { toast } from 'svelte-sonner';
 
 	type LoginFormProps = {
 		form: SuperValidated<Infer<typeof loginSchema>>;
@@ -16,10 +18,28 @@
 	let { form: superform }: LoginFormProps = $props();
 
 	const form = superForm(superform, {
-		validators: zod4Client(loginSchema)
+		validators: zod4Client(loginSchema),
+		onResult: async (event) => {
+			if (event.result.type === 'redirect') {
+				toast.success('Login Success!!');
+				const endpoint = event.result.location;
+				console.log('Form submission result:', endpoint);
+				await goto(endpoint);
+			}
+			if (event.result.type === 'error') {
+				toast.error('Login Error', {
+					description: 'An error occurred during login.'
+				});
+			}
+			if (event.result.type === 'failure') {
+				toast.error('Login Failed', {
+					description: 'Please check your credentials and try again.'
+				});
+			}
+		}
 	});
 
-	const { form: formData, enhance, submitting } = form;
+	const { form: formData, enhance, submitting, message } = form;
 </script>
 
 <Card.Root class="mx-auto w-full max-w-sm">
@@ -56,6 +76,14 @@
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
+			{#if $message?.type === 'error'}
+				<div class="text-center text-xs">
+					<p class="text-destructive">{$message.text}</p>
+					{#if $message?.description}
+						<p class="text-destructive/75">{$message.description}</p>
+					{/if}
+				</div>
+			{/if}
 
 			<Button type="submit" disabled={$submitting}>
 				{#if $submitting}

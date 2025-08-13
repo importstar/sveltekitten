@@ -1,4 +1,4 @@
-import type { Actions } from '@sveltejs/kit';
+import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -24,35 +24,41 @@ export const actions: Actions = {
 			return { form };
 		}
 
-		const result = await fastapiClient.POST('/auth/login', {
-			body: {
-				email: form.data.email,
-				password: form.data.password
+		try {
+			const result = await fastapiClient.POST('/auth/login', {
+				body: {
+					email: form.data.email,
+					password: form.data.password
+				}
+			});
+			logger.info(sanitize({ result: result, res: result.response }), 'Login Result');
+
+			if (result.data) {
+				cookies.set(
+					'access_token',
+					result.data.access_token,
+					createCookieOptions({ maxAge: 60 * 10 })
+				);
+				cookies.set(
+					'refresh_token',
+					result.data.refresh_token,
+					createCookieOptions({ maxAge: 60 * 60 * 24 * 30 })
+				);
+			} else {
+				logger.error({ error: result.error }, 'Login failed');
+				return message(form, {
+					type: 'error',
+					text: 'Login failed. Please check your credentials and try again.'
+				});
 			}
-		});
-
-		logger.info(sanitize({ result: result, res: result.response }), 'Login Result');
-
-		if (result.data) {
-			cookies.set(
-				'access_token',
-				result.data.access_token,
-				createCookieOptions({ maxAge: 60 * 10 })
-			);
-			cookies.set(
-				'refresh_token',
-				result.data.refresh_token,
-				createCookieOptions({ maxAge: 60 * 60 * 24 * 30 })
-			);
-		} else {
-			logger.error({ error: result.error }, 'Login failed');
+		} catch (err) {
+			logger.error({ error: err }, 'Login request failed');
 			return message(form, {
 				type: 'error',
-				text: 'Login failed. Please check your credentials and try again.',
-				// description: result.error.detail?.join(', ')
+				text: 'An error occurred while processing your request. Please try again later.',
+				description: 'If the problem persists, please contact support.'
 			});
 		}
-
-		return { form };
+		return redirect(303, '/home');
 	}
 };

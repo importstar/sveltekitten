@@ -3,6 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { env } from '$env/dynamic/public';
 	import { QueryClientProvider } from '@tanstack/svelte-query';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 
 	let { children, data } = $props();
 </script>
@@ -13,6 +14,8 @@
 		{env.PUBLIC_APP_TITLE}
 	</title>
 </svelte:head>
+
+<Toaster position="top-center" expand={true} richColors />
 
 <QueryClientProvider client={data.queryClient}>
 	{@render children?.()}

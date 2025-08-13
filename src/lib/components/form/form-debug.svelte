@@ -6,5 +6,7 @@
 </script>
 
 {#if dev}
-	<SuperDebug data={formData} />
+	<div class="my-3">
+		<SuperDebug data={formData} />
+	</div>
 {/if}

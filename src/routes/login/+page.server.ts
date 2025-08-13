@@ -4,7 +4,8 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { loginSchema } from '$lib/schemas/auth.schema';
 import { logger, sanitize } from '$lib/logger';
-import { createCookieOptions } from '$lib/utils/cookies';
+import { setAuthTokens } from '$lib/utils/auth';
+import createClient from 'openapi-fetch';
 
 export const load = (async () => {
 	const form = await superValidate(zod4(loginSchema));
@@ -34,16 +35,7 @@ export const actions: Actions = {
 			logger.info(sanitize({ result: result, res: result.response }), 'Login Result');
 
 			if (result.data) {
-				cookies.set(
-					'access_token',
-					result.data.access_token,
-					createCookieOptions({ maxAge: 60 * 10 })
-				);
-				cookies.set(
-					'refresh_token',
-					result.data.refresh_token,
-					createCookieOptions({ maxAge: 60 * 60 * 24 * 30 })
-				);
+				setAuthTokens(cookies, result.data.access_token, result.data.refresh_token);
 			} else {
 				logger.error({ error: result.error }, 'Login failed');
 				return message(form, {

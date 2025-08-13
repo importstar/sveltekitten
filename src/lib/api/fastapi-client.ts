@@ -1,34 +1,16 @@
-import { env } from '$env/dynamic/public';
-import type { Cookies } from '@sveltejs/kit';
-import createClient, { type Middleware } from 'openapi-fetch';
-import { browser } from '$app/environment';
+import createClient from 'openapi-fetch';
 import type { paths } from './paths/fastapi';
-import { getAuthToken } from './api-core';
 
 // Define a clear type for the SvelteKit event object for server-side usage.
 type ServerEvent = {
 	fetch: typeof fetch;
-	cookies: Cookies;
+	url: URL;
 };
-
-export function createAuthMiddleware(cookies?: Cookies): Middleware {
-	return {
-		async onRequest({ request }) {
-			const token: string | null = getAuthToken(browser ? undefined : cookies);
-			if (token) {
-				request.headers.set('Authorization', `Bearer ${token}`);
-			} else {
-				console.error('[ERR] => Auth Middleware: No token found.');
-			}
-			return request;
-		}
-	};
-}
 
 export function createFastApiClient(event?: ServerEvent) {
 	const client = createClient<paths>({
-		baseUrl: env.PUBLIC_API_URL,
-		fetch: browser ? fetch : (event?.fetch ?? fetch)
+		baseUrl: event ? `${event?.url.origin}/api/proxy` : '/api/proxy',
+		fetch: event ? event.fetch : fetch
 	});
 
 	return client;

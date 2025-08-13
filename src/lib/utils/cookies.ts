@@ -1,3 +1,5 @@
+import { dev } from '$app/environment';
+
 export interface CookieOptions {
 	path?: string;
 	maxAge?: number;
@@ -11,9 +13,10 @@ export function createCookieOptions(options: CookieOptions = {}) {
 	return {
 		path: options?.path ?? '/',
 		maxAge: options?.maxAge ?? 60 * 30, // 30 นาที (วินาที)
-		secure: options?.secure ?? true,
+		secure: options?.secure ?? !dev,
 		httpOnly: options?.httpOnly ?? true,
-		sameSite: options?.sameSite ?? 'strict',
+		// SameSite: 'lax' is a good default for most cases
+		sameSite: options?.sameSite ?? 'lax',
 		domain: options?.domain ?? undefined
 	};
 }

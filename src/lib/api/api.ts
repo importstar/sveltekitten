@@ -1,7 +1,7 @@
 // API Client Factory
 import { dev } from '$app/environment';
 import type { Cookies } from '@sveltejs/kit';
-import { ApiError, getAuthToken } from './api-core';
+import { ApiError } from '$lib/utils/api-core';
 
 type ApiClientConfig = {
 	fetchInstance: typeof fetch;
@@ -26,12 +26,6 @@ export function createApiClient({ fetchInstance, baseUrl }: ApiClientConfig): Ap
 			'Content-Type': 'application/json',
 			Accept: 'application/json'
 		};
-
-		// ถ้ามี token ให้เพิ่ม Authorization header
-		const token = getAuthToken();
-		if (token) {
-			defaultHeaders['Authorization'] = `Bearer ${token}`;
-		}
 
 		const mergedOptions: RequestInit = {
 			...options,

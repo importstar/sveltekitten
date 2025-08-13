@@ -1,6 +1,5 @@
-import { clearCookieTokens } from '$lib/utils/auth';
+import { clearCookieTokens, isProtectedRoute, isTokenExpired } from '$lib/utils/auth';
 import type { Handle } from '@sveltejs/kit';
-import jwt from 'jsonwebtoken';
 
 export const handleAuthGuard: Handle = async ({ event, resolve }) => {
 	const { cookies, route } = event;
@@ -22,21 +21,3 @@ export const handleAuthGuard: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 	return response;
 };
-
-function isProtectedRoute(path: string | null): boolean {
-	if (!path) return false;
-	return path.split('/').includes('(auth)');
-}
-
-function isTokenExpired(token?: string, bufferTime = 300): boolean {
-	if (!token) return true;
-	// logger.debug('Checking if token is expired:');
-	console.log('token', token);
-	const { exp } = (jwt.decode(token) as { exp?: number }) || {};
-	if (exp) {
-		console.log('Token expiration date:', new Date(exp * 1000).toISOString());
-	}
-	console.log('Current time:', new Date().toISOString());
-	console.log('exp', exp, !exp || Date.now() / 1000 >= exp - bufferTime);
-	return !exp || Date.now() / 1000 >= exp - bufferTime;
-}

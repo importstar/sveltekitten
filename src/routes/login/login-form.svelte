@@ -19,6 +19,7 @@
 
 	const form = superForm(superform, {
 		validators: zod4Client(loginSchema),
+		resetForm: false,
 		onResult: async (event) => {
 			if (event.result.type === 'redirect') {
 				toast.success('Login Success!!');

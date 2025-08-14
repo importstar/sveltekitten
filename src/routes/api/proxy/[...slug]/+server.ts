@@ -49,7 +49,9 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch }) => {
 			logger.warn(`[API Proxy] Unauthorized request, trying to refresh access token.`);
 			const refreshToken = cookies.get('refresh_token');
 			if (!refreshToken) {
-				throw new Error('No refresh token available');
+				logger.warn(`[API Proxy] No Refresh Token`);
+				clearCookieTokens(cookies);
+				return response;
 			}
 
 			// 3. ขอ access token ใหม่จาก API ด้วย refresh token

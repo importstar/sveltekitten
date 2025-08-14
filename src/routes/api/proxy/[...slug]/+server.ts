@@ -5,6 +5,11 @@ import type { RequestHandler } from './$types';
 import { clearCookieTokens, setAuthTokens } from '$lib/utils/auth';
 
 const handler: RequestHandler = async ({ request, cookies, params, fetch }) => {
+	if (!env.BACKEND_API_URL) {
+		logger.error('BACKEND_API_URL environment variable is not set.');
+		throw new Error('BACKEND_API_URL environment variable is not set.');
+	}
+
 	const path = params.slug;
 	const accessToken = cookies.get('access_token');
 	const API_ENDPOINT = `${env.BACKEND_API_URL}/${path}`;
@@ -31,7 +36,7 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch }) => {
 			method: request.method,
 			headers,
 			body: request.body,
-			// @ts-ignore
+			// @ts-expect-error
 			duplex: 'half'
 		});
 	};

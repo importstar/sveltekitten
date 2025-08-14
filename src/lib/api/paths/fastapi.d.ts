@@ -338,6 +338,11 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+            /**
+             * Remember Me
+             * @default false
+             */
+            remember_me: boolean;
         };
         /** ValidationError */
         ValidationError: {

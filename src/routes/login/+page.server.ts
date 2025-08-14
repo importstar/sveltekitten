@@ -5,7 +5,6 @@ import { zod4 } from 'sveltekit-superforms/adapters';
 import { loginSchema } from '$lib/schemas/auth.schema';
 import { logger, sanitize } from '$lib/logger';
 import { setAuthTokens } from '$lib/utils/auth';
-import createClient from 'openapi-fetch';
 
 export const load = (async () => {
 	const form = await superValidate(zod4(loginSchema));
@@ -29,10 +28,11 @@ export const actions: Actions = {
 			const result = await fastapiClient.POST('/auth/login', {
 				body: {
 					email: form.data.email,
-					password: form.data.password
+					password: form.data.password,
+					remember_me: form.data.rememberMe ?? false
 				}
 			});
-			logger.info(sanitize({ result: result, res: result.response }), 'Login Result');
+			logger.info(sanitize({ result: result }), 'Login Result');
 
 			if (result.data) {
 				setAuthTokens(cookies, result.data.access_token, result.data.refresh_token);

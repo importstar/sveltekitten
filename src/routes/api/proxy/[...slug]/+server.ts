@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { clearCookieTokens, setAuthTokens } from '$lib/utils/auth';
 
-const handler: RequestHandler = async ({ request, cookies, params, fetch }) => {
+const handler: RequestHandler = async ({ request, cookies, params, fetch, url }) => {
 	if (!env.BACKEND_API_URL) {
 		logger.error('BACKEND_API_URL environment variable is not set.');
 		throw new Error('BACKEND_API_URL environment variable is not set.');
@@ -12,7 +12,7 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch }) => {
 
 	const path = params.slug;
 	const accessToken = cookies.get('access_token');
-	const API_ENDPOINT = `${env.BACKEND_API_URL}/${path}`;
+	const API_ENDPOINT = `${env.BACKEND_API_URL}/${path}${url.search}`;
 
 	logger.debug(`${params.slug}`);
 	logger.info(`[API Proxy] Forwarding request to: [${request.method}] ${API_ENDPOINT}`);
@@ -25,6 +25,9 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch }) => {
 		headers.delete('host');
 		headers.delete('content-length');
 
+		// headers.delete('accept-encoding');
+		// headers.set('accept-encoding', 'identity');
+
 		// Auth: prefer explicit token param, else cookie token
 		if (token) {
 			headers.set('authorization', `Bearer ${token}`);
@@ -35,9 +38,7 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch }) => {
 		return fetch(API_ENDPOINT, {
 			method: request.method,
 			headers,
-			body: request.body,
-			// @ts-expect-error
-			duplex: 'half'
+			body: request.body
 		});
 	};
 

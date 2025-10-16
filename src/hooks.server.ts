@@ -13,4 +13,4 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		});
 	});
 
-export const handle: Handle = sequence(handleAuthGuard, handleParaglide, handleFastApiClient);
+export const handle: Handle = sequence(handleAuthGuard, handleFastApiClient);

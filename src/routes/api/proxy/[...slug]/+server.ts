@@ -35,9 +35,11 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch, url })
 			headers.delete('authorization');
 		}
 
-		const requestInit: RequestInit & { duplex: string } = {
+		const requestInit: RequestInit = {
 			headers,
 			body: request.body,
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
 			duplex: 'half'
 		};
 

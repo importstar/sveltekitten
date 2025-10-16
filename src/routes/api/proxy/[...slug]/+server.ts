@@ -35,10 +35,15 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch, url })
 			headers.delete('authorization');
 		}
 
+		const requestInit: RequestInit & { duplex: string } = {
+			headers,
+			body: request.body,
+			duplex: 'half'
+		};
+
 		return fetch(API_ENDPOINT, {
 			method: request.method,
-			headers,
-			body: request.body
+			...requestInit
 		});
 	};
 

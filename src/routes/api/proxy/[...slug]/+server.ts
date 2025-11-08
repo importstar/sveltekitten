@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private';
-import { logger, sanitize } from '$lib/logger';
+import { logger } from '$lib/logger';
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { clearCookieTokens, setAuthTokens } from '$lib/utils/auth';
@@ -12,85 +12,103 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch, url })
 
 	const path = params.slug;
 	const accessToken = cookies.get('access_token');
-	const API_ENDPOINT = `${env.BACKEND_API_URL}/${path}${url.search}`;
+	const backendBase = env.BACKEND_API_URL.replace(/\/$/, '');
+	const API_ENDPOINT = `${backendBase}/${path}${url.search}`;
 
 	logger.debug(`${params.slug}`);
 	logger.info(`[API Proxy] Forwarding request to: [${request.method}] ${API_ENDPOINT}`);
 
-	const makeApiRequest = (token?: string) => {
-		// start with incoming headers
-		const headers = new Headers(request.headers);
-
-		// clean up hop-by-hop / auto headers
-		headers.delete('host');
+	// Clean up response headers that may cause client-side decoding errors
+	const createProxyResponse = (originalResponse: Response): Response => {
+		const headers = new Headers(originalResponse.headers);
+		headers.delete('content-encoding');
 		headers.delete('content-length');
+		return new Response(originalResponse.body, {
+			status: originalResponse.status,
+			statusText: originalResponse.statusText,
+			headers
+		});
+	};
 
-		// headers.delete('accept-encoding');
-		// headers.set('accept-encoding', 'identity');
+	// Normalize request headers before forwarding
+	const sanitizeRequestHeaders = (h: Headers) => {
+		h.delete('host');
+		h.delete('content-length');
+		// remove other hop-by-hop headers if present
+		h.delete('connection');
+		h.delete('keep-alive');
+		h.delete('proxy-authorization');
+		h.delete('transfer-encoding');
+		// Optionally prevent backend from sending compressed responses
+		h.delete('accept-encoding');
+		return h;
+	};
 
-		// Auth: prefer explicit token param, else cookie token
+	const makeApiRequest = (token?: string) => {
+		const headers = sanitizeRequestHeaders(new Headers(request.headers));
 		if (token) {
+			logger.debug('[API Proxy] Using access token to forward request');
 			headers.set('authorization', `Bearer ${token}`);
 		} else {
 			headers.delete('authorization');
 		}
 
-		const requestInit: RequestInit = {
-			headers,
-			body: request.body,
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-expect-error
-			duplex: 'half'
+		const fetchOptions: RequestInit & { duplex?: 'half' } = {
+			method: request.method,
+			headers
 		};
 
-		return fetch(API_ENDPOINT, {
-			method: request.method,
-			...requestInit
+		if (request.method !== 'GET' && request.method !== 'HEAD' && request.body) {
+			fetchOptions.duplex = 'half';
+			fetchOptions.body = request.body;
+		}
+
+		return fetch(API_ENDPOINT, fetchOptions);
+	};
+
+	// Small helper to attempt refreshing the access token
+	const tryRefresh = async (refreshToken?: string) => {
+		if (!refreshToken) return undefined;
+		const resp = await fetch(`${backendBase}/auth/refresh`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${refreshToken}`
+			}
 		});
+
+		if (!resp.ok) {
+			logger.warn('[API Proxy] Refresh token invalid/expired, clearing cookies');
+			clearCookieTokens(cookies);
+			return undefined;
+		}
+
+		const data = await resp.json();
+		setAuthTokens(cookies, data.access_token, data.refresh_token);
+		return data.access_token as string | undefined;
 	};
 
 	try {
-		// 1. first attempt to fetch the API
-		const response = await makeApiRequest(accessToken);
-		// 2. check 401 Unauthorized response then try create new access token with refresh token
+		let response = await makeApiRequest(accessToken);
+
 		if (response.status === 401 && accessToken) {
 			logger.warn(`[API Proxy] Unauthorized request, trying to refresh access token.`);
 			const refreshToken = cookies.get('refresh_token');
 			if (!refreshToken) {
 				logger.warn(`[API Proxy] No Refresh Token`);
 				clearCookieTokens(cookies);
-				return response;
+				return createProxyResponse(response);
 			}
 
-			// 3. ขอ access token ใหม่จาก API ด้วย refresh token
-			const refreshResponse = await fetch(`${env.BACKEND_API_URL}/auth/refresh`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${refreshToken}`
-				}
-			});
-
-			if (refreshResponse.ok) {
-				const newTokenData = await refreshResponse.json();
-				setAuthTokens(cookies, newTokenData.access_token, newTokenData.refresh_token);
-				// ยิง request ซ้ำอีกครั้งด้วย access token ใหม่
-				return makeApiRequest(newTokenData.access_token);
-			} else {
-				// ถ้า refresh token ไม่ถูกต้อง ให้ลบ token ทั้งหมด
-				logger.warn(`[API Proxy] Refresh token expired or invalid, clearing cookies.`);
-				clearCookieTokens(cookies);
+			const newAccess = await tryRefresh(refreshToken);
+			if (newAccess) {
+				response = await makeApiRequest(newAccess);
 			}
 		}
-		// จากนั้นก็คืนค่า response เดิมออกไปซึ่งอาจจะเป็น 200 หรือ 401
-		return response;
+
+		return createProxyResponse(response);
 	} catch (err) {
-		logger.error(
-			sanitize({
-				error: err
-			}),
-			`[API Proxy] Error fetching from API: [${request.method}] ${API_ENDPOINT}`
-		);
+		logger.error({ err }, `[API Proxy] Error fetching from API: [${request.method}] ${API_ENDPOINT}`);
 		throw error(502, `Bad Gateway: Could not connect to API service. Please try again later.`);
 	}
 };

@@ -25,7 +25,7 @@ export const actions: Actions = {
 		}
 
 		try {
-			const result = await fastapiClient.POST('/auth/login', {
+			const result = await fastapiClient.POST('/v1/auth/login', {
 				body: {
 					email: form.data.email,
 					password: form.data.password,

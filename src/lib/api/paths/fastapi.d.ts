@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/auth/register": {
+    "/v1/auth/register": {
         parameters: {
             query?: never;
             header?: never;
@@ -21,7 +21,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/login": {
+    "/v1/auth/login": {
         parameters: {
             query?: never;
             header?: never;
@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/refresh": {
+    "/v1/auth/refresh": {
         parameters: {
             query?: never;
             header?: never;
@@ -55,7 +55,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/logout": {
+    "/v1/auth/logout": {
         parameters: {
             query?: never;
             header?: never;
@@ -72,7 +72,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/verify": {
+    "/v1/auth/verify": {
         parameters: {
             query?: never;
             header?: never;
@@ -89,7 +89,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/auth/oauth/{provider}/callback": {
+    "/v1/auth/oauth/{provider}/callback": {
         parameters: {
             query?: never;
             header?: never;

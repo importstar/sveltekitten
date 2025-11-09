@@ -69,7 +69,7 @@ const handler: RequestHandler = async ({ request, cookies, params, fetch, url })
 	// Small helper to attempt refreshing the access token
 	const tryRefresh = async (refreshToken?: string) => {
 		if (!refreshToken) return undefined;
-		const resp = await fetch(`${backendBase}/auth/refresh`, {
+		const resp = await fetch(`${backendBase}/v1/auth/refresh`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
